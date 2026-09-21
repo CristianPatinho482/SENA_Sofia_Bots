@@ -1,0 +1,16 @@
+{
+  "output_filename": "ASTIN_Modelo_Estrella.xlsx",
+  "center_name": "Centro ASTIN",
+  "total_patterns": ["\\btotal(?:es)?\\b", "\\bsubtotal(?:es)?\\b", "\\bacumulado\\b"],
+  "aliases": {
+    "programa": ["programa", "formacion", "área", "area"],
+    "categoria": ["categoria", "categoría", "línea", "linea"],
+    "estrategia": ["estrategia"],
+    "nivel": ["nivel"],
+    "modalidad": ["modalidad"],
+    "periodo": ["periodo", "período", "mes", "fecha", "vigencia"],
+    "medida": ["meta", "cantidad", "valor", "total", "número", "numero"],
+    "descripcion": ["descripción", "descripcion", "actividad", "concepto"],
+    "indicador": ["indicador", "meta", "nombre indicador"]
+  }
+}

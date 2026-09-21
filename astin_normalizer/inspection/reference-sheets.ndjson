@@ -1,0 +1,5 @@
+{"kind":"sheet","id":"ws/xdt914","name":"DimCentro","index":0,"range":"A1:D2","address":"A1:D2"}
+{"kind":"sheet","id":"ws/lidqub","name":"DimPeriodo","index":1,"range":"A1:D2","address":"A1:D2"}
+{"kind":"sheet","id":"ws/6q7ntg","name":"DimCategoria","index":2,"range":"A1:B11","address":"A1:B11"}
+{"kind":"sheet","id":"ws/3xhp2k","name":"DimIndicador","index":3,"range":"A1:B84","address":"A1:B84"}
+{"kind":"sheet","id":"ws/40nfk4","name":"FactMetas","index":4,"range":"A1:G113","address":"A1:G113"}
