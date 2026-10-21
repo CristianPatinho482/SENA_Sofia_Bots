@@ -9,6 +9,7 @@ Base modular para bots de Sena Sofia Plus.
 - `sofia_bots/sofia.py`: login, seleccion de rol, apertura de rutas de menu y validacion basica de sesion.
 - `sofia_bots/downloads.py`: descargas con `expect_download`, nombres unicos y opcion de sobrescritura.
 - `sofia_bots/control.py`: bitacora Excel para evitar duplicados y registrar errores.
+- `sofia_bots/inasistencias_cleaner.py`: limpieza FSM del consolidado y salida lista para Power BI.
 - `sofia_bots/multi.py`: utilidad simple para repartir tareas entre varios bots/hilos.
 - `bots/descargar_inasistencias.py`: primer bot modular para descargar el consolidado de inasistencias.
 
@@ -176,6 +177,31 @@ C:\Users\capatino\OneDrive - Servicio Nacional de Aprendizaje\Equipo ASTIN-DESAR
 Si ya existe, lo reemplaza. Esto permite programarlo diariamente en el Programador de tareas de Windows.
 
 Despues de descargar, el bot abre el archivo con Microsoft Excel y renombra la primera hoja a `Inasistencias`. Esto es necesario para que los filtros o conexiones que esperan ese nombre de hoja funcionen correctamente.
+
+## Limpieza automatica del reporte
+
+Inmediatamente despues de la descarga, el bot ejecuta el limpiador FSM del proyecto
+`Proyecto Limpiador Inasistencias` sobre el mismo archivo. El resultado reemplaza
+`Inasistencias.xls` de forma atomica y queda con el esquema que consume Power BI:
+
+```text
+Instructor, Ficha, Programa, Apellidos, Nombres,
+Identificacion Aprendiz, Fecha Inicio, Fecha Fin, Cant.horas, Justificacion
+```
+
+Notas operativas:
+
+- Si el archivo ya tiene ese esquema, el limpiador no lo vuelve a procesar.
+- Si la limpieza falla, el archivo original no se reemplaza y el bot registra el
+  error en `control_inasistencias.xlsx`; no reporta exito.
+- El reporte de Sofia Plus llega como XLSX aunque el archivo se llame `.xls`; el
+  limpiador detecta el formato por contenido.
+- Para descargar sin limpiar (solo diagnostico), agrega `--omitir-limpieza`.
+- Para ejecutar el limpiador de forma independiente:
+
+```powershell
+python -m sofia_bots.inasistencias_cleaner "C:\Ruta\Inasistencias.xls"
+```
 
 ## Programador de tareas de Windows
 

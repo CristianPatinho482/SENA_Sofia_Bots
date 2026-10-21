@@ -12,6 +12,7 @@ from sofia_bots.control import ExcelControlLog
 from sofia_bots.credentials_dialog import ask_credentials
 from sofia_bots.downloads import save_download
 from sofia_bots.excel_tools import rename_first_worksheet
+from sofia_bots.inasistencias_cleaner import limpiar_inasistencias
 from sofia_bots.power import suspend_windows
 from sofia_bots.settings import BrowserSettings, SofiaCredentials, SofiaSettings, load_env_file
 from sofia_bots.sofia import bootstrap_sofia, content_frame, session_is_alive
@@ -74,6 +75,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Muestra un cuadro para ingresar usuario y contrasena antes de ejecutar.",
     )
+    parser.add_argument(
+        "--omitir-limpieza",
+        action="store_true",
+        help="Descarga el reporte pero no ejecuta el limpiador FSM.",
+    )
     return parser.parse_args()
 
 
@@ -105,6 +111,11 @@ def fill_dates_and_download(page, output_dir: Path, fecha_inicio: str, fecha_fin
         target_path=target_path,
         overwrite=True,
     )
+    # Si Sofia Plus cambia la extension sugerida, se conserva el nombre operativo
+    # que consume Power BI (Inasistencias.xls).
+    if saved_path != target_path:
+        os.replace(saved_path, target_path)
+        saved_path = target_path
     rename_first_worksheet(saved_path, "Inasistencias")
     return saved_path
 
@@ -159,12 +170,20 @@ def main() -> None:
                 )
 
             saved_path = runner.run_step("descarga de inasistencias", job)
+
+            if args.omitir_limpieza:
+                print("\nLimpieza omitida por --omitir-limpieza.")
+            else:
+                # La limpieza es obligatoria: si falla, el bot no reporta exito.
+                print("\nLimpiando reporte de inasistencias...")
+                saved_path = limpiar_inasistencias(saved_path)
+
             control.success(report_key, str(saved_path))
 
             print("\n===================================")
-            print("DESCARGA COMPLETADA CORRECTAMENTE")
+            print("DESCARGA Y LIMPIEZA COMPLETADAS")
             print("===================================")
-            print(f"\nArchivo guardado en:\n{saved_path}")
+            print(f"\nArchivo listo para Power BI:\n{saved_path}")
 
         except Exception as exc:
             control.error(report_key, exc)

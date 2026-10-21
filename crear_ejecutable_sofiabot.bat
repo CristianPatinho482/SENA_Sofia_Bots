@@ -28,7 +28,7 @@ if exist "assets\BOT_REPORTES.png" set ADD_ASSETS=%ADD_ASSETS% --add-data "asset
 
 set ADD_BROWSERS=--add-data "%LOCALAPPDATA%\ms-playwright\chromium-1223;ms-playwright\chromium-1223" --add-data "%LOCALAPPDATA%\ms-playwright\chromium_headless_shell-1223;ms-playwright\chromium_headless_shell-1223" --add-data "%LOCALAPPDATA%\ms-playwright\ffmpeg-1011;ms-playwright\ffmpeg-1011" --add-data "%LOCALAPPDATA%\ms-playwright\winldd-1007;ms-playwright\winldd-1007"
 
-".venv\Scripts\python.exe" -m PyInstaller --noconfirm --clean --onefile --windowed --name SOFIABOT_Inasistencias_Completo --icon assets\SOFIABOT.ico %ADD_ASSETS% %ADD_BROWSERS% --collect-all playwright --collect-all greenlet --hidden-import greenlet --hidden-import pyee --hidden-import pandas --hidden-import openpyxl --hidden-import PIL bots\sofiabot_inasistencias_app.py
+".venv\Scripts\python.exe" -m PyInstaller --noconfirm --clean --onefile --windowed --name SOFIABOT_Inasistencias_Completo --icon assets\SOFIABOT.ico %ADD_ASSETS% %ADD_BROWSERS% --collect-all playwright --collect-all greenlet --hidden-import greenlet --hidden-import pyee --hidden-import pandas --hidden-import openpyxl --hidden-import PIL --hidden-import xlrd bots\sofiabot_inasistencias_app.py
 
 echo.
 echo Ejecutable generado en:

@@ -1,5 +1,6 @@
 playwright
 pandas
 openpyxl
+xlrd
 pyinstaller
 Pillow
