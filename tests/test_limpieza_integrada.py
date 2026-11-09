@@ -63,6 +63,7 @@ class TestIntegracionLimpieza(unittest.TestCase):
         self._tmp.cleanup()
 
     def test_01_sobrescribe_xls_con_contenido_xlsx(self) -> None:
+        """Sobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio."""
         reporte = self.base / "Inasistencias.xls"
         _crear_reporte_crudo(reporte)
 
@@ -81,6 +82,7 @@ class TestIntegracionLimpieza(unittest.TestCase):
         )
 
     def test_02_salida_en_archivo_separado(self) -> None:
+        """Genera Inasistencias_Limpio.xlsx sin tocar el archivo original."""
         reporte = self.base / "Inasistencias.xls"
         limpio = self.base / "Inasistencias_Limpio.xlsx"
         _crear_reporte_crudo(reporte)
@@ -91,6 +93,7 @@ class TestIntegracionLimpieza(unittest.TestCase):
         self.assertEqual(len(pd.read_excel(limpio, engine="openpyxl")), 2)
 
     def test_03_fallo_no_destruye_el_original(self) -> None:
+        """Si la limpieza falla, el archivo original queda intacto."""
         reporte = self.base / "Inasistencias.xls"
         contenido = b"contenido invalido que no es excel"
         reporte.write_bytes(contenido)
@@ -102,6 +105,7 @@ class TestIntegracionLimpieza(unittest.TestCase):
         self.assertEqual(reporte.read_bytes(), contenido)
 
     def test_04_segunda_limpieza_es_idempotente(self) -> None:
+        """Una segunda limpieza no modifica el archivo ya limpio."""
         reporte = self.base / "Inasistencias.xls"
         _crear_reporte_crudo(reporte)
 

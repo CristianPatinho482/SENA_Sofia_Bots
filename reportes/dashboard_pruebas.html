@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de pruebas - SOFIABOT</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --panel: #ffffff; --text: #172033; --muted: #6b7690;
+    --line: #e3e8f2; --ok: #0f9d58; --ok-bg: #e6f6ec;
+    --fail: #d93025; --fail-bg: #fdeceb; --error: #b06000; --error-bg: #fff4e0;
+    --skip: #5f6368; --skip-bg: #eef0f4; --accent: #1a56db;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  }
+  header {
+    background: linear-gradient(135deg, #123a8f, #1a56db 60%, #2f7cf6);
+    color: #fff; padding: 32px 40px 28px;
+  }
+  header h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: .2px; }
+  header p { margin: 0; opacity: .9; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 18px; font-size: 13px; }
+  .meta span { background: rgba(255,255,255,.14); padding: 6px 10px; border-radius: 6px; }
+  main { max-width: 1180px; margin: -18px auto 40px; padding: 0 24px; }
+  .banner {
+    background: var(--panel); border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 6px 24px rgba(23,32,51,.08); font-weight: 600;
+    border-left: 6px solid var(--ok);
+  }
+  .banner.fail { border-left-color: var(--fail); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 18px 0; }
+  .card {
+    background: var(--panel); border-radius: 12px; padding: 16px 18px;
+    box-shadow: 0 4px 16px rgba(23,32,51,.06); display: flex; flex-direction: column; gap: 4px;
+    border-top: 4px solid var(--line);
+  }
+  .card.ok { border-top-color: var(--ok); }
+  .card.fail { border-top-color: var(--fail); }
+  .card.error { border-top-color: var(--error); }
+  .card.skip { border-top-color: var(--skip); }
+  .card .value { font-size: 26px; font-weight: 700; }
+  .card .label { color: var(--muted); font-size: 13px; }
+  .suite { background: var(--panel); border-radius: 12px; padding: 20px 22px; margin: 18px 0; box-shadow: 0 4px 16px rgba(23,32,51,.06); }
+  .suite h2 { margin: 0 0 4px; font-size: 18px; }
+  .muted { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  code { font-family: Consolas, "Cascadia Mono", monospace; font-size: 12.5px; }
+  .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .badge.ok { color: var(--ok); background: var(--ok-bg); }
+  .badge.fail { color: var(--fail); background: var(--fail-bg); }
+  .badge.error { color: var(--error); background: var(--error-bg); }
+  .badge.skip { color: var(--skip); background: var(--skip-bg); }
+  details { margin-top: 6px; }
+  summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+  pre { white-space: pre-wrap; background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto; }
+  .checks ul { list-style: none; padding: 0; margin: 0; }
+  .checks li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .checks li:last-child { border-bottom: none; }
+  .pending { border-left: 4px solid var(--accent); }
+  footer { max-width: 1180px; margin: 0 auto 40px; padding: 0 24px; color: var(--muted); font-size: 12px; }
+  footer code { background: var(--skip-bg); padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dashboard de pruebas</h1>
+  <p>SOFIABOT Inasistencias &middot; resultados de la ejecucion automatizada</p>
+  <div class="meta">
+    <span>Fecha: 2026-11-09 10:19:00</span>
+    <span>Rama: perf/navegacion-rapida</span>
+    <span>Commit: 0e475e2</span>
+    <span>Python: 3.14.5</span>
+    <span>Sistema: Windows-11-10.0.26100-SP0</span>
+  </div>
+</header>
+<main>
+  <div class="banner ok">Ejecucion satisfactoria</div>
+  <section class="cards"><div class="card neutral"><span class="value">11</span><span class="label">Pruebas</span></div>
+<div class="card ok"><span class="value">11</span><span class="label">Aprobadas</span></div>
+<div class="card fail"><span class="value">0</span><span class="label">Fallidas</span></div>
+<div class="card error"><span class="value">0</span><span class="label">Errores</span></div>
+<div class="card skip"><span class="value">0</span><span class="label">Omitidas</span></div>
+<div class="card neutral"><span class="value">872 ms</span><span class="label">Tiempo total</span></div></section>
+  
+            <section class="suite">
+              <h2>Integracion del limpiador</h2>
+              <p class="muted">4 pruebas &middot;
+                 102 ms &middot;
+                 0 fallidas &middot; 0 errores</p>
+              <table>
+                <thead><tr><th>Prueba</th><th>Descripcion</th><th>Estado</th><th class="num">Duracion</th></tr></thead>
+                <tbody><tr><td><code>test_01_sobrescribe_xls_con_contenido_xlsx</code></td><td>Sobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio.</td><td><span class="badge ok">Aprobada</span></td><td class="num">50 ms</td></tr><tr><td><code>test_02_salida_en_archivo_separado</code></td><td>Genera Inasistencias_Limpio.xlsx sin tocar el archivo original.</td><td><span class="badge ok">Aprobada</span></td><td class="num">24 ms</td></tr><tr><td><code>test_03_fallo_no_destruye_el_original</code></td><td>Si la limpieza falla, el archivo original queda intacto.</td><td><span class="badge ok">Aprobada</span></td><td class="num">2 ms</td></tr><tr><td><code>test_04_segunda_limpieza_es_idempotente</code></td><td>Una segunda limpieza no modifica el archivo ya limpio.</td><td><span class="badge ok">Aprobada</span></td><td class="num">26 ms</td></tr></tbody>
+              </table>
+            </section>
+            
+            <section class="suite">
+              <h2>FSM original del limpiador</h2>
+              <p class="muted">7 pruebas &middot;
+                 4 ms &middot;
+                 0 fallidas &middot; 0 errores</p>
+              <table>
+                <thead><tr><th>Prueba</th><th>Descripcion</th><th>Estado</th><th class="num">Duracion</th></tr></thead>
+                <tbody><tr><td><code>test_01_fila_normal_alineada</code></td><td>Fila densa con delta_i = 0 se emite alineada.</td><td><span class="badge ok">Aprobada</span></td><td class="num">1 ms</td></tr><tr><td><code>test_02_fila_desplazada_shift_1</code></td><td>Fila densa con delta_i = 1 se realinea dinamicamente (tau_delta).</td><td><span class="badge ok">Aprobada</span></td><td class="num">0 ms</td></tr><tr><td><code>test_03_descarte_de_encabezados_y_ruido</code></td><td>Titulos, encabezados y filas vacias -&gt; IGNORE_NOISE.</td><td><span class="badge ok">Aprobada</span></td><td class="num">0 ms</td></tr><tr><td><code>test_04_fision_nombres_compuestos</code></td><td>Operador alpha: &#x27;Apellidos, Nombres&#x27; se divide por &#x27;,&#x27;.</td><td><span class="badge ok">Aprobada</span></td><td class="num">0 ms</td></tr><tr><td><code>test_05_recuperacion_de_errores</code></td><td>Basura irrecuperable -&gt; ERROR_RECOVERY sin detener el proceso.</td><td><span class="badge ok">Aprobada</span></td><td class="num">1 ms</td></tr><tr><td><code>test_06_fila_dispersa_real</code></td><td>Plantilla dispersa del reporte real: fase d=2 y extraccion total.</td><td><span class="badge ok">Aprobada</span></td><td class="num">1 ms</td></tr><tr><td><code>test_07_fila_compacta_real</code></td><td>Plantilla compacta del reporte real: fase d=0 y fechas como texto.</td><td><span class="badge ok">Aprobada</span></td><td class="num">1 ms</td></tr></tbody>
+              </table>
+            </section>
+            
+  <section class="suite checks">
+    <h2>Chequeos adicionales</h2>
+    <ul><li><span class="badge ok">OK</span> <strong>Compilacion de modulos (compileall)</strong> <span class="muted">Todos los modulos compilan sin errores.</span></li>
+<li><span class="badge ok">OK</span> <strong>Importacion y esquema del limpiador</strong> <span class="muted">Esquema de 10 columnas verificado.</span></li></ul>
+  </section>
+  <section class="suite pending">
+    <h2>Pruebas no ejecutadas en esta corrida</h2>
+    <ul>
+      <li><strong>Navegacion real contra Sofia Plus:</strong> requiere credenciales y red; se valida manualmente con el bot.</li>
+      <li><strong>Actualizacion de Power BI:</strong> requiere Power BI Desktop y el archivo de salida sincronizado.</li>
+    </ul>
+  </section>
+</main>
+<footer>
+  Generado con <code>python tools/generar_dashboard_pruebas.py</code>.
+  Para repetir las suites: <code>python -m unittest discover -s tests -v</code>.
+</footer>
+</body>
+</html>

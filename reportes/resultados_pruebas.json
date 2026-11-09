@@ -1,0 +1,164 @@
+{
+  "generado": "2026-11-09 10:19:00",
+  "git": {
+    "rama": "perf/navegacion-rapida",
+    "commit": "0e475e2"
+  },
+  "python": "3.14.5",
+  "sistema": "Windows-11-10.0.26100-SP0",
+  "resumen": {
+    "total": 11,
+    "fallidas": 0,
+    "errores": 0,
+    "omitidas": 0,
+    "duracion": 0.8716651999857277
+  },
+  "suites": [
+    {
+      "nombre": "Integracion del limpiador",
+      "registros": [
+        {
+          "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_01_sobrescribe_xls_con_contenido_xlsx",
+          "nombre": "test_01_sobrescribe_xls_con_contenido_xlsx",
+          "descripcion": "Sobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio.",
+          "suite": "Integracion del limpiador",
+          "modulo": "test_limpieza_integrada",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0496501000598073
+        },
+        {
+          "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_02_salida_en_archivo_separado",
+          "nombre": "test_02_salida_en_archivo_separado",
+          "descripcion": "Genera Inasistencias_Limpio.xlsx sin tocar el archivo original.",
+          "suite": "Integracion del limpiador",
+          "modulo": "test_limpieza_integrada",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.023721400182694197
+        },
+        {
+          "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_03_fallo_no_destruye_el_original",
+          "nombre": "test_03_fallo_no_destruye_el_original",
+          "descripcion": "Si la limpieza falla, el archivo original queda intacto.",
+          "suite": "Integracion del limpiador",
+          "modulo": "test_limpieza_integrada",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.002090000081807375
+        },
+        {
+          "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_04_segunda_limpieza_es_idempotente",
+          "nombre": "test_04_segunda_limpieza_es_idempotente",
+          "descripcion": "Una segunda limpieza no modifica el archivo ya limpio.",
+          "suite": "Integracion del limpiador",
+          "modulo": "test_limpieza_integrada",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.02590269991196692
+        }
+      ],
+      "total": 4,
+      "fallidas": 0,
+      "errores": 0,
+      "omitidas": 0,
+      "duracion": 0.10153679992072284,
+      "salida": "test_01_sobrescribe_xls_con_contenido_xlsx (test_limpieza_integrada.TestIntegracionLimpieza.test_01_sobrescribe_xls_con_contenido_xlsx)\nSobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio. ... ok\ntest_02_salida_en_archivo_separado (test_limpieza_integrada.TestIntegracionLimpieza.test_02_salida_en_archivo_separado)\nGenera Inasistencias_Limpio.xlsx sin tocar el archivo original. ... ok\ntest_03_fallo_no_destruye_el_original (test_limpieza_integrada.TestIntegracionLimpieza.test_03_fallo_no_destruye_el_original)\nSi la limpieza falla, el archivo original queda intacto. ... ok\ntest_04_segunda_limpieza_es_idempotente (test_limpieza_integrada.TestIntegracionLimpieza.test_04_segunda_limpieza_es_idempotente)\nUna segunda limpieza no modifica el archivo ya limpio. ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.101s\n\nOK\n"
+    },
+    {
+      "nombre": "FSM original del limpiador",
+      "registros": [
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_01_fila_normal_alineada",
+          "nombre": "test_01_fila_normal_alineada",
+          "descripcion": "Fila densa con delta_i = 0 se emite alineada.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0005098998080939054
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_02_fila_desplazada_shift_1",
+          "nombre": "test_02_fila_desplazada_shift_1",
+          "descripcion": "Fila densa con delta_i = 1 se realinea dinamicamente (tau_delta).",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0003074998967349529
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_03_descarte_de_encabezados_y_ruido",
+          "nombre": "test_03_descarte_de_encabezados_y_ruido",
+          "descripcion": "Titulos, encabezados y filas vacias -> IGNORE_NOISE.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 7.720012217760086e-05
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_04_fision_nombres_compuestos",
+          "nombre": "test_04_fision_nombres_compuestos",
+          "descripcion": "Operador alpha: 'Apellidos, Nombres' se divide por ','.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 1.4799879863858223e-05
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_05_recuperacion_de_errores",
+          "nombre": "test_05_recuperacion_de_errores",
+          "descripcion": "Basura irrecuperable -> ERROR_RECOVERY sin detener el proceso.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0006075000856071711
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_06_fila_dispersa_real",
+          "nombre": "test_06_fila_dispersa_real",
+          "descripcion": "Plantilla dispersa del reporte real: fase d=2 y extraccion total.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0011261000763624907
+        },
+        {
+          "id": "test_fsm_inasistencias.TestFSMInasistencias.test_07_fila_compacta_real",
+          "nombre": "test_07_fila_compacta_real",
+          "descripcion": "Plantilla compacta del reporte real: fase d=0 y fechas como texto.",
+          "suite": "FSM original del limpiador",
+          "modulo": "test_fsm_inasistencias",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0007454000879079103
+        }
+      ],
+      "total": 7,
+      "fallidas": 0,
+      "errores": 0,
+      "omitidas": 0,
+      "duracion": 0.003517800010740757,
+      "salida": "test_01_fila_normal_alineada (test_fsm_inasistencias.TestFSMInasistencias.test_01_fila_normal_alineada)\nFila densa con delta_i = 0 se emite alineada. ... ok\ntest_02_fila_desplazada_shift_1 (test_fsm_inasistencias.TestFSMInasistencias.test_02_fila_desplazada_shift_1)\nFila densa con delta_i = 1 se realinea dinamicamente (tau_delta). ... ok\ntest_03_descarte_de_encabezados_y_ruido (test_fsm_inasistencias.TestFSMInasistencias.test_03_descarte_de_encabezados_y_ruido)\nTitulos, encabezados y filas vacias -> IGNORE_NOISE. ... ok\ntest_04_fision_nombres_compuestos (test_fsm_inasistencias.TestFSMInasistencias.test_04_fision_nombres_compuestos)\nOperador alpha: 'Apellidos, Nombres' se divide por ','. ... ok\ntest_05_recuperacion_de_errores (test_fsm_inasistencias.TestFSMInasistencias.test_05_recuperacion_de_errores)\nBasura irrecuperable -> ERROR_RECOVERY sin detener el proceso. ... ok\ntest_06_fila_dispersa_real (test_fsm_inasistencias.TestFSMInasistencias.test_06_fila_dispersa_real)\nPlantilla dispersa del reporte real: fase d=2 y extraccion total. ... ok\ntest_07_fila_compacta_real (test_fsm_inasistencias.TestFSMInasistencias.test_07_fila_compacta_real)\nPlantilla compacta del reporte real: fase d=0 y fechas como texto. ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.003s\n\nOK\n"
+    }
+  ],
+  "chequeos": [
+    {
+      "nombre": "Compilacion de modulos (compileall)",
+      "ok": true,
+      "detalle": "Todos los modulos compilan sin errores.",
+      "duracion": 0.1100960997864604
+    },
+    {
+      "nombre": "Importacion y esquema del limpiador",
+      "ok": true,
+      "detalle": "Esquema de 10 columnas verificado.",
+      "duracion": 3.4999102354049683e-06
+    }
+  ]
+}

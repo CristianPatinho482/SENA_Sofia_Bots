@@ -203,6 +203,153 @@ Notas operativas:
 python -m sofia_bots.inasistencias_cleaner "C:\Ruta\Inasistencias.xls"
 ```
 
+## Optimizacion de la navegacion (ajustes manuales)
+
+Estos ajustes reducen el tiempo de navegacion, sobre todo la pausa que aparece
+despues de ingresar las credenciales. Son cambios manuales: no se aplican solos.
+
+### Causa principal de la demora
+
+En `sofia_bots/sofia.py`, dentro de `select_role`, se espera `networkidle`:
+
+```python
+page.wait_for_load_state("networkidle", timeout=10_000)
+```
+
+Sofia Plus suele mantener trafico de red abierto, por lo que esa espera casi
+siempre agota los 10 segundos y luego continua. El `TimeoutError` se ignora, asi
+que la pausa no se nota en el log.
+
+### 1. No esperar todos los recursos al abrir Sofia Plus
+
+En `sofia_bots/sofia.py`, funcion `find_login_frame`:
+
+```python
+page.goto(SOFIA_URL, timeout=timeout_ms, wait_until="domcontentloaded")
+```
+
+### 2. Esperar el menu real en lugar de `networkidle`
+
+En `sofia_bots/sofia.py`, funcion `select_role`, reemplaza el bloque de
+`wait_for_load_state` por:
+
+```python
+    try:
+        role_selector.select_option(label=settings.role_label)
+    except Exception:
+        role_selector.select_option(settings.role_value)
+
+    # Esperar la condicion real: el menu ya disponible.
+    page.get_by_role(
+        "link", name=accent_tolerant_pattern("Gestion de Tiempos")
+    ).wait_for(timeout=30_000)
+```
+
+Si quitas `networkidle`, elimina tambien `TimeoutError` del import de
+`sofia_bots/sofia.py`, porque deja de usarse:
+
+```python
+from playwright.sync_api import Frame, Page
+```
+
+### 3. Arranque mas rapido de Chromium
+
+En `sofia_bots/browser.py`, metodo `BrowserSession.start`:
+
+```python
+self.browser = self.playwright.chromium.launch(
+    headless=self.settings.headless,
+    slow_mo=self.settings.slow_mo,
+    args=[
+        "--disable-background-networking",
+        "--disable-component-update",
+        "--disable-default-apps",
+        "--no-default-browser-check",
+        "--no-first-run",
+    ],
+)
+```
+
+### 4. Opcional: esperar el campo del formulario
+
+En `sofia_bots/sofia.py`, funcion `content_frame`, se puede esperar el campo real
+en vez del `body` del iframe:
+
+```python
+def content_frame(page):
+    frame = page.frame_locator('iframe[name="contenido"]')
+    frame.locator("#fechaInicioEvento").wait_for(timeout=30_000)
+    return frame
+```
+
+### 5. Opcional: reducir el sondeo del login
+
+En `sofia_bots/sofia.py`, funcion `find_login_frame`:
+
+```python
+poll_ms = 250
+```
+
+### Como medir el cambio
+
+Agrega tiempos temporales en `bootstrap_sofia` y compara varias ejecuciones
+antes y despues, a la misma hora:
+
+```python
+import time
+
+t0 = time.perf_counter()
+login(page, settings)
+print(f"[tiempo] login: {time.perf_counter() - t0:.2f}s")
+
+t1 = time.perf_counter()
+select_role(page, settings)
+print(f"[tiempo] rol: {time.perf_counter() - t1:.2f}s")
+
+t2 = time.perf_counter()
+open_menu_path(page, *module_path)
+print(f"[tiempo] menu: {time.perf_counter() - t2:.2f}s")
+```
+
+### Recomendaciones
+
+- No reemplazar esperas por `time.sleep()`: se rompe cuando Sofia responde distinto.
+- No bajar a la ligera los timeouts de 30 s o 120 s; en horas pico el portal tarda.
+- `headless` puede ser mas rapido, pero Sofia puede requerir navegador visible.
+- No bloquear imagenes, CSS o JavaScript: puede romper el portal.
+- Reutilizar cookies o sesion ahorraria el login, pero cambia el modelo de
+  seguridad y debe evaluarse aparte.
+- Si se modifica el codigo, recompilar el ejecutable con
+  `crear_ejecutable_sofiabot.bat`. El lanzador programado usa `.venv` y toma los
+  cambios sin recompilar.
+
+## Dashboard de pruebas
+
+El proyecto incluye un generador de dashboard que ejecuta las pruebas y deja un
+reporte visual autocontenido:
+
+```powershell
+python tools/generar_dashboard_pruebas.py
+```
+
+Salidas:
+
+```text
+reportes\dashboard_pruebas.html
+reportes\resultados_pruebas.json
+```
+
+El dashboard muestra:
+
+- Resumen de pruebas aprobadas, fallidas, errores y omitidas.
+- Detalle por suite con descripcion, estado y duracion de cada prueba.
+- Rama, commit, version de Python y fecha de la corrida.
+- Chequeos de compilacion e importacion del limpiador.
+
+Incluye las 4 pruebas de integracion del limpiador y las 7 pruebas FSM
+originales. El HTML no usa CDN ni servidor: se abre directamente en el navegador.
+El JSON se puede consumir desde Power BI si se quiere otro tablero.
+
 ## Programador de tareas de Windows
 
 ### Ejecutar y dejar el equipo encendido
