@@ -16,13 +16,8 @@ Base modular para bots de Sena Sofia Plus.
 
 ## Credenciales
 
-Ejecuta exactamente esto (en orden):
-
-cd "C:\Users\capatino\Documents\Software con códex"
-
-
-El nuevo bot no deja usuario ni clave escritos dentro del codigo. La forma
-recomendada es dejar que el propio bot las guarde en `.env` la primera vez.
+El bot no deja usuario ni clave escritos dentro del codigo. La forma recomendada
+es dejar que el propio bot las guarde en `.env` la primera vez.
 
 ### Primera ejecucion (recomendada)
 
@@ -124,7 +119,7 @@ Para generar un ejecutable de escritorio:
 crear_ejecutable_sofiabot.bat
 ```
 
-El ejecutable queda en `dist\SOFIABOT_Inasistencias.exe`.
+El ejecutable completo queda en `dist\SOFIABOT_Inasistencias_Completo.exe`.
 
 ### Crear ejecutable e icono de escritorio
 
@@ -282,13 +277,15 @@ python -m sofia_bots.inasistencias_cleaner "C:\Ruta\Inasistencias.xls"
 
 ## Integracion con Power BI y Power Automate
 
-El proyecto incluye dos plantillas de flujo y la consulta M del reporte:
+El proyecto incluye dos plantillas de flujo, la consulta M del reporte y los
+lanzadores que ejecutan los flujos de escritorio:
 
 ```text
 power_automate\flujo_1_boton_powerbi.json
 power_automate\flujo_2_programado_1300.json
-power_automate\LEEME.md
 power_bi\consulta_inasistencias.pq
+ejecutar_inasistencias.bat
+ejecutar_inasistencias_programada.bat
 ```
 
 Resumen del flujo:
@@ -310,30 +307,117 @@ Texto sugerido junto al boton del reporte:
 > automatica todos los dias a la 1:00 p.m. Vuelve a presionarlo unicamente si
 > Sofia Plus te pide cambiar la contrasena.
 
+### Requisitos previos en Power Automate
+
+1. El proyecto debe estar en la maquina donde se ejecuta Power Automate Desktop.
+2. Debe existir el entorno virtual `.venv` o Python disponible en el `PATH`.
+3. La primera vez, ejecuta manualmente `ejecutar_inasistencias.bat` e ingresa
+   usuario y contrasena. Eso crea/actualiza `.env` y la carpeta
+   `<Escritorio>\Inasistencias`.
+4. Verifica que existan las conexiones **Power BI** (`shared_powerbi`) y
+   **Desktop flows** (`shared_uiflow`).
+
+### Crear los flujos de escritorio
+
+En Power Automate Desktop crea dos flujos de escritorio (una sola vez). Ambos
+usan **Ejecutar aplicacion** con **Esperar a que termine: Si**:
+
+| Flujo de escritorio | Aplicacion | Directorio de trabajo |
+| --- | --- | --- |
+| `SOFIABOT - Inasistencias interactivo` | `ejecutar_inasistencias.bat` | raiz del proyecto |
+| `SOFIABOT - Inasistencias programado` | `ejecutar_inasistencias_programada.bat` | raiz del proyecto |
+
+Opcional: si el codigo de salida es distinto de 0, registrar un error en el
+flujo.
+
+> El lanzador programado escribe su log en
+> `logs\inasistencias_programada_AAAAMMDD.log` y no abre el cuadro de
+> credenciales: si `.env` no existe o esta incompleto, termina con error. Por eso
+> la primera ejecucion se hace con el boton o con el `.bat` interactivo.
+
+### Flujo 1: boton de Power BI
+
+1. En Power Automate, **Crear > Flujo de nube automatizado**.
+2. Desencadenador **Cuando se pulsa un boton de Power BI**
+   (*On Power BI button clicked*).
+3. Accion **Ejecutar un flujo creado con Power Automate for desktop** y
+   selecciona `SOFIABOT - Inasistencias interactivo`.
+4. Modo de ejecucion: **Con sesion iniciada (attended)**.
+5. Guarda como `SOFIABOT - Descargar inasistencias (boton Power BI)`.
+6. Publica el reporte en el servicio de Power BI.
+
+Si prefieres pegar la definicion, abre el flujo, usa **Peek code** y reemplaza
+el objeto `definition` por el de `flujo_1_boton_powerbi.json`. Ajusta
+`DesktopFlowId` al ID real del flujo de escritorio.
+
+### Flujo 2: actualizacion diaria a la 1:00 p.m.
+
+1. **Crear > Flujo de nube programado**.
+2. Frecuencia **Dia**, intervalo **1**, zona horaria
+   **SA Pacific Standard Time** (Colombia), hora **13:00**.
+3. Accion **Ejecutar un flujo creado con Power Automate for desktop** y
+   selecciona `SOFIABOT - Inasistencias programado`.
+4. Modo **Sin atender (unattended)** si la maquina esta configurada como maquina
+   de Power Automate; si no, usa **attended** y deja la sesion de Windows abierta.
+5. Guarda como `SOFIABOT - Inasistencias diario 13:00`.
+
+> Power Automate no ejecuta archivos locales directamente: siempre lo hace a
+> traves de un flujo de escritorio en una maquina registrada. Si no tienes
+> maquina unattended, usa el Programador de tareas de Windows con
+> `ejecutar_inasistencias_programada.bat`.
+
 ### Ajustar el .pbix
 
 La consulta actual del reporte debe apuntar a la nueva ruta y **no** debe hacer
 `Table.Skip(1)`, porque el archivo limpio ya trae una sola fila de encabezados.
-La consulta lista para pegar esta en `power_bi\consulta_inasistencias.pq`.
+Si se mantiene ese paso, se pierde la primera fila de datos y los encabezados
+quedan corridos. La consulta lista para pegar esta en
+`power_bi\consulta_inasistencias.pq`.
 
 Pasos:
 
 1. Abre `Reporte personalizado inasistencias Sofía v2.pbix`.
-2. **Inicio > Transformar datos > Nueva origen > Consulta en blanco**.
-3. **Editor avanzado** y pega el contenido de `consulta_inasistencias.pq`.
-4. Ajusta la ruta si tu Escritorio esta en otra ubicacion.
+2. **Inicio > Transformar datos** y selecciona la consulta de inasistencias (o
+   crea una con **Nueva origen > Consulta en blanco**).
+3. **Inicio > Editor avanzado** y pega el contenido de
+   `consulta_inasistencias.pq`.
+4. Ajusta la variable `Ruta` si tu Escritorio esta en otra ubicacion.
 5. **Cerrar y aplicar** y actualiza el reporte.
-6. Guarda el `.pbix` y publicalo.
+6. Guarda el `.pbix` y publicalo en el area de trabajo.
 
 Si el reporte ya tenia una consulta al archivo anterior, reemplaza su codigo M
 por este y actualiza las referencias visuales si cambian los nombres de columnas.
 
-### Archivos de Power Automate
+Para agregar el boton de actualizacion:
 
-Las plantillas no son paquetes `.zip` importables: cada organizacion tiene sus
-propias conexiones, maquina y flujo de escritorio. En
-`power_automate\LEEME.md` estan los pasos exactos para crear los dos flujos y el
-flujo de escritorio que ejecuta los `.bat`.
+1. En la vista **Informe**, inserta un **boton** o el visual **Power Automate**.
+2. En las propiedades del boton, elige **Accion > Power Automate**.
+3. Selecciona el flujo `SOFIABOT - Descargar inasistencias (boton Power BI)`.
+4. Agrega el texto sugerido junto al boton.
+
+> Power BI no puede leer el Escritorio de otra maquina. El reporte debe abrirse
+> en el mismo equipo donde corre el bot, o el archivo debe sincronizarse a una
+> carpeta compartida. Para el escenario actual (un solo equipo con Power BI
+> Desktop), la ruta del Escritorio es la correcta.
+
+### Solucion de problemas en Power BI y Power Automate
+
+- **No aparece el boton en Power BI:** el visual Power Automate necesita que el
+  flujo exista y que el reporte se haya publicado con la conexion correcta.
+- **El flujo programado falla:** revisa `logs\inasistencias_programada_*.log`.
+- **Sofia Plus pide cambiar la contrasena:** ejecuta el boton interactivo,
+  ingresa la clave nueva y se guardara en `.env`.
+- **La maquina estaba apagada a la 1:00 p.m.:** Power Automate no ejecuta el
+  flujo hasta que la maquina este disponible si es unattended. Programa el
+  equipo para que no se suspenda.
+
+### Plantillas de Power Automate
+
+Los archivos de `power_automate` son plantillas de definicion, no paquetes
+`.zip` importables: cada organizacion tiene sus propias conexiones, maquina y
+flujo de escritorio, y un paquete con IDs ajenos suele fallar al importar.
+`power_automate\LEEME.md` solo describe el contenido de la carpeta y remite a
+esta seccion.
 
 ## Optimizacion de la navegacion (ajustes manuales)
 
@@ -487,9 +571,9 @@ El JSON se puede consumir desde Power BI si se quiere otro tablero.
 
 ### Actualizacion diaria a la 1:00 p.m.
 
-La forma recomendada es el flujo de Power Automate descrito en
-`power_automate\LEEME.md`. Si prefieres el Programador de tareas de Windows,
-crea una tarea diaria a las 13:00 con:
+La forma recomendada es el flujo de Power Automate descrito en la seccion
+*Integracion con Power BI y Power Automate*. Si prefieres el Programador de
+tareas de Windows, crea una tarea diaria a las 13:00 con:
 
 - Programa: `C:\Users\capatino\Documents\Software con códex\ejecutar_inasistencias_programada.bat`
 - Argumentos: dejar vacio
