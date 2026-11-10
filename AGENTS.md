@@ -134,6 +134,8 @@ Identificacion Aprendiz, Fecha Inicio, Fecha Fin, Cant.horas, Justificacion
 ## Documentacion relacionada
 
 - `README.md`: uso, limpieza, dashboard y ajustes de navegacion.
+- `docs/Caracteristicas_bot_software_profesional.docx`: criterios de calidad que
+  debe cumplir un bot profesional (alcance, modularidad, robustez, seguridad).
 - `power_automate/LEEME.md`: como crear los dos flujos.
 - `power_bi/consulta_inasistencias.pq`: consulta M para el reporte.
 - `reportes/dashboard_pruebas.html`: ultimo resultado visual de pruebas.
