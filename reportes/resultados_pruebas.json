@@ -1,69 +1,229 @@
 {
-  "generado": "2026-11-09 10:19:00",
+  "generado": "2026-11-10 15:33:26",
   "git": {
     "rama": "perf/navegacion-rapida",
-    "commit": "0e475e2"
+    "commit": "746bf67"
   },
   "python": "3.14.5",
   "sistema": "Windows-11-10.0.26100-SP0",
   "resumen": {
-    "total": 11,
+    "total": 27,
     "fallidas": 0,
     "errores": 0,
     "omitidas": 0,
-    "duracion": 0.8716651999857277
+    "duracion": 1.2200899999588728
   },
   "suites": [
     {
-      "nombre": "Integracion del limpiador",
+      "nombre": "Integracion del bot y limpiador",
       "registros": [
+        {
+          "id": "test_credenciales_y_salida.TestCarpetaDeSalida.test_01_crea_la_carpeta_si_no_existe",
+          "nombre": "test_01_crea_la_carpeta_si_no_existe",
+          "descripcion": "ensure_output_dir crea Escritorio\\Inasistencias y es idempotente.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0021438999101519585
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCarpetaDeSalida.test_02_ruta_operativa_del_reporte",
+          "nombre": "test_02_ruta_operativa_del_reporte",
+          "descripcion": "El archivo conserva el nombre exacto que consume Power BI.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 4.739989526569843e-05
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCarpetaDeSalida.test_03_escritorio_termina_en_inasistencias",
+          "nombre": "test_03_escritorio_termina_en_inasistencias",
+          "descripcion": "La carpeta por defecto cuelga del Escritorio real del usuario.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.00020370003767311573
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCredencialesPersistentes.test_01_guarda_y_recupera_credenciales",
+          "nombre": "test_01_guarda_y_recupera_credenciales",
+          "descripcion": "El .env se crea y las credenciales se leen de vuelta.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.01067009987309575
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCredencialesPersistentes.test_02_conserva_otras_claves_y_comentarios",
+          "nombre": "test_02_conserva_otras_claves_y_comentarios",
+          "descripcion": "Actualizar credenciales no borra el resto de la configuracion.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0039773001335561275
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCredencialesPersistentes.test_03_sin_datos_devuelve_none",
+          "nombre": "test_03_sin_datos_devuelve_none",
+          "descripcion": "Si no hay .env o esta incompleto, no inventa credenciales.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0019243999850004911
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCredencialesPersistentes.test_04_plantilla_de_ejemplo_no_cuenta_como_credencial",
+          "nombre": "test_04_plantilla_de_ejemplo_no_cuenta_como_credencial",
+          "descripcion": "Copiar .env.example no evita el cuadro de primer uso.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.001988200005143881
+        },
+        {
+          "id": "test_credenciales_y_salida.TestCredencialesPersistentes.test_05_no_imprime_la_contrasena",
+          "nombre": "test_05_no_imprime_la_contrasena",
+          "descripcion": "Guardar credenciales no escribe la clave en la salida estandar.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0015565999783575535
+        },
+        {
+          "id": "test_credenciales_y_salida.TestErroresDeCredenciales.test_01_login_rechazado_no_se_reintenta",
+          "nombre": "test_01_login_rechazado_no_se_reintenta",
+          "descripcion": "Un error de credenciales sale de inmediato, sin agotar reintentos.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 6.019999273121357e-05
+        },
+        {
+          "id": "test_credenciales_y_salida.TestErroresDeCredenciales.test_02_fallo_de_chromium_no_se_reintenta",
+          "nombre": "test_02_fallo_de_chromium_no_se_reintenta",
+          "descripcion": "Si Chromium no arranca, no tiene sentido esperar 120 reintentos.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 2.9799994081258774e-05
+        },
+        {
+          "id": "test_credenciales_y_salida.TestRaizDeDatos.test_01_exe_dentro_de_dist_usa_la_raiz_del_proyecto",
+          "nombre": "test_01_exe_dentro_de_dist_usa_la_raiz_del_proyecto",
+          "descripcion": "dist\\SOFIABOT.exe reutiliza el .env y logs del proyecto.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.001872299937531352
+        },
+        {
+          "id": "test_credenciales_y_salida.TestRaizDeDatos.test_02_exe_fuera_del_proyecto_usa_su_propia_carpeta",
+          "nombre": "test_02_exe_fuera_del_proyecto_usa_su_propia_carpeta",
+          "descripcion": "Un .exe copiado a otra carpeta sigue siendo portable.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0008952000644057989
+        },
+        {
+          "id": "test_credenciales_y_salida.TestResolucionDeCredenciales.test_01_sin_credenciales_falla_si_no_es_interactivo",
+          "nombre": "test_01_sin_credenciales_falla_si_no_es_interactivo",
+          "descripcion": "Una tarea programada sin .env debe fallar, no quedarse esperando.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0004980000667273998
+        },
+        {
+          "id": "test_credenciales_y_salida.TestResolucionDeCredenciales.test_02_pide_y_guarda_si_es_interactivo",
+          "nombre": "test_02_pide_y_guarda_si_es_interactivo",
+          "descripcion": "En modo interactivo pide una vez y persiste en .env.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.002794699976220727
+        },
+        {
+          "id": "test_credenciales_y_salida.TestResolucionDeCredenciales.test_03_reutiliza_sin_abrir_cuadro",
+          "nombre": "test_03_reutiliza_sin_abrir_cuadro",
+          "descripcion": "Si .env ya tiene credenciales, no se vuelve a preguntar.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.0033519999124109745
+        },
+        {
+          "id": "test_credenciales_y_salida.TestResolucionDeCredenciales.test_04_forzar_abre_el_cuadro",
+          "nombre": "test_04_forzar_abre_el_cuadro",
+          "descripcion": "--forzar-credenciales permite actualizar la clave guardada.",
+          "suite": "test_credenciales_y_salida",
+          "modulo": "test_credenciales_y_salida",
+          "estado": "PASS",
+          "detalle": "",
+          "duracion": 0.004582300083711743
+        },
         {
           "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_01_sobrescribe_xls_con_contenido_xlsx",
           "nombre": "test_01_sobrescribe_xls_con_contenido_xlsx",
           "descripcion": "Sobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio.",
-          "suite": "Integracion del limpiador",
+          "suite": "Integracion del bot y limpiador",
           "modulo": "test_limpieza_integrada",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0496501000598073
+          "duracion": 0.06114340014755726
         },
         {
           "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_02_salida_en_archivo_separado",
           "nombre": "test_02_salida_en_archivo_separado",
           "descripcion": "Genera Inasistencias_Limpio.xlsx sin tocar el archivo original.",
-          "suite": "Integracion del limpiador",
+          "suite": "Integracion del bot y limpiador",
           "modulo": "test_limpieza_integrada",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.023721400182694197
+          "duracion": 0.02440929994918406
         },
         {
           "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_03_fallo_no_destruye_el_original",
           "nombre": "test_03_fallo_no_destruye_el_original",
           "descripcion": "Si la limpieza falla, el archivo original queda intacto.",
-          "suite": "Integracion del limpiador",
+          "suite": "Integracion del bot y limpiador",
           "modulo": "test_limpieza_integrada",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.002090000081807375
+          "duracion": 0.0027854000218212605
         },
         {
           "id": "test_limpieza_integrada.TestIntegracionLimpieza.test_04_segunda_limpieza_es_idempotente",
           "nombre": "test_04_segunda_limpieza_es_idempotente",
           "descripcion": "Una segunda limpieza no modifica el archivo ya limpio.",
-          "suite": "Integracion del limpiador",
+          "suite": "Integracion del bot y limpiador",
           "modulo": "test_limpieza_integrada",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.02590269991196692
+          "duracion": 0.02896260004490614
         }
       ],
-      "total": 4,
+      "total": 20,
       "fallidas": 0,
       "errores": 0,
       "omitidas": 0,
-      "duracion": 0.10153679992072284,
-      "salida": "test_01_sobrescribe_xls_con_contenido_xlsx (test_limpieza_integrada.TestIntegracionLimpieza.test_01_sobrescribe_xls_con_contenido_xlsx)\nSobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio. ... ok\ntest_02_salida_en_archivo_separado (test_limpieza_integrada.TestIntegracionLimpieza.test_02_salida_en_archivo_separado)\nGenera Inasistencias_Limpio.xlsx sin tocar el archivo original. ... ok\ntest_03_fallo_no_destruye_el_original (test_limpieza_integrada.TestIntegracionLimpieza.test_03_fallo_no_destruye_el_original)\nSi la limpieza falla, el archivo original queda intacto. ... ok\ntest_04_segunda_limpieza_es_idempotente (test_limpieza_integrada.TestIntegracionLimpieza.test_04_segunda_limpieza_es_idempotente)\nUna segunda limpieza no modifica el archivo ya limpio. ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.101s\n\nOK\n"
+      "duracion": 0.1543678999878466,
+      "salida": "test_01_crea_la_carpeta_si_no_existe (test_credenciales_y_salida.TestCarpetaDeSalida.test_01_crea_la_carpeta_si_no_existe)\nensure_output_dir crea Escritorio\\Inasistencias y es idempotente. ... ok\ntest_02_ruta_operativa_del_reporte (test_credenciales_y_salida.TestCarpetaDeSalida.test_02_ruta_operativa_del_reporte)\nEl archivo conserva el nombre exacto que consume Power BI. ... ok\ntest_03_escritorio_termina_en_inasistencias (test_credenciales_y_salida.TestCarpetaDeSalida.test_03_escritorio_termina_en_inasistencias)\nLa carpeta por defecto cuelga del Escritorio real del usuario. ... ok\ntest_01_guarda_y_recupera_credenciales (test_credenciales_y_salida.TestCredencialesPersistentes.test_01_guarda_y_recupera_credenciales)\nEl .env se crea y las credenciales se leen de vuelta. ... ok\ntest_02_conserva_otras_claves_y_comentarios (test_credenciales_y_salida.TestCredencialesPersistentes.test_02_conserva_otras_claves_y_comentarios)\nActualizar credenciales no borra el resto de la configuracion. ... ok\ntest_03_sin_datos_devuelve_none (test_credenciales_y_salida.TestCredencialesPersistentes.test_03_sin_datos_devuelve_none)\nSi no hay .env o esta incompleto, no inventa credenciales. ... ok\ntest_04_plantilla_de_ejemplo_no_cuenta_como_credencial (test_credenciales_y_salida.TestCredencialesPersistentes.test_04_plantilla_de_ejemplo_no_cuenta_como_credencial)\nCopiar .env.example no evita el cuadro de primer uso. ... ok\ntest_05_no_imprime_la_contrasena (test_credenciales_y_salida.TestCredencialesPersistentes.test_05_no_imprime_la_contrasena)\nGuardar credenciales no escribe la clave en la salida estandar. ... ok\ntest_01_login_rechazado_no_se_reintenta (test_credenciales_y_salida.TestErroresDeCredenciales.test_01_login_rechazado_no_se_reintenta)\nUn error de credenciales sale de inmediato, sin agotar reintentos. ... ok\ntest_02_fallo_de_chromium_no_se_reintenta (test_credenciales_y_salida.TestErroresDeCredenciales.test_02_fallo_de_chromium_no_se_reintenta)\nSi Chromium no arranca, no tiene sentido esperar 120 reintentos. ... ok\ntest_01_exe_dentro_de_dist_usa_la_raiz_del_proyecto (test_credenciales_y_salida.TestRaizDeDatos.test_01_exe_dentro_de_dist_usa_la_raiz_del_proyecto)\ndist\\SOFIABOT.exe reutiliza el .env y logs del proyecto. ... ok\ntest_02_exe_fuera_del_proyecto_usa_su_propia_carpeta (test_credenciales_y_salida.TestRaizDeDatos.test_02_exe_fuera_del_proyecto_usa_su_propia_carpeta)\nUn .exe copiado a otra carpeta sigue siendo portable. ... ok\ntest_01_sin_credenciales_falla_si_no_es_interactivo (test_credenciales_y_salida.TestResolucionDeCredenciales.test_01_sin_credenciales_falla_si_no_es_interactivo)\nUna tarea programada sin .env debe fallar, no quedarse esperando. ... ok\ntest_02_pide_y_guarda_si_es_interactivo (test_credenciales_y_salida.TestResolucionDeCredenciales.test_02_pide_y_guarda_si_es_interactivo)\nEn modo interactivo pide una vez y persiste en .env. ... ok\ntest_03_reutiliza_sin_abrir_cuadro (test_credenciales_y_salida.TestResolucionDeCredenciales.test_03_reutiliza_sin_abrir_cuadro)\nSi .env ya tiene credenciales, no se vuelve a preguntar. ... ok\ntest_04_forzar_abre_el_cuadro (test_credenciales_y_salida.TestResolucionDeCredenciales.test_04_forzar_abre_el_cuadro)\n--forzar-credenciales permite actualizar la clave guardada. ... ok\ntest_01_sobrescribe_xls_con_contenido_xlsx (test_limpieza_integrada.TestIntegracionLimpieza.test_01_sobrescribe_xls_con_contenido_xlsx)\nSobrescribe Inasistencias.xls conservando contenido XLSX y esquema limpio. ... ok\ntest_02_salida_en_archivo_separado (test_limpieza_integrada.TestIntegracionLimpieza.test_02_salida_en_archivo_separado)\nGenera Inasistencias_Limpio.xlsx sin tocar el archivo original. ... ok\ntest_03_fallo_no_destruye_el_original (test_limpieza_integrada.TestIntegracionLimpieza.test_03_fallo_no_destruye_el_original)\nSi la limpieza falla, el archivo original queda intacto. ... ok\ntest_04_segunda_limpieza_es_idempotente (test_limpieza_integrada.TestIntegracionLimpieza.test_04_segunda_limpieza_es_idempotente)\nUna segunda limpieza no modifica el archivo ya limpio. ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.154s\n\nOK\n"
     },
     {
       "nombre": "FSM original del limpiador",
@@ -76,7 +236,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0005098998080939054
+          "duracion": 0.0006134998984634876
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_02_fila_desplazada_shift_1",
@@ -86,7 +246,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0003074998967349529
+          "duracion": 0.0003736000508069992
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_03_descarte_de_encabezados_y_ruido",
@@ -96,7 +256,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 7.720012217760086e-05
+          "duracion": 8.499994874000549e-05
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_04_fision_nombres_compuestos",
@@ -106,7 +266,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 1.4799879863858223e-05
+          "duracion": 1.7200130969285965e-05
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_05_recuperacion_de_errores",
@@ -116,7 +276,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0006075000856071711
+          "duracion": 0.0008298999164253473
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_06_fila_dispersa_real",
@@ -126,7 +286,7 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0011261000763624907
+          "duracion": 0.0012078001163899899
         },
         {
           "id": "test_fsm_inasistencias.TestFSMInasistencias.test_07_fila_compacta_real",
@@ -136,15 +296,15 @@
           "modulo": "test_fsm_inasistencias",
           "estado": "PASS",
           "detalle": "",
-          "duracion": 0.0007454000879079103
+          "duracion": 0.0006792000494897366
         }
       ],
       "total": 7,
       "fallidas": 0,
       "errores": 0,
       "omitidas": 0,
-      "duracion": 0.003517800010740757,
-      "salida": "test_01_fila_normal_alineada (test_fsm_inasistencias.TestFSMInasistencias.test_01_fila_normal_alineada)\nFila densa con delta_i = 0 se emite alineada. ... ok\ntest_02_fila_desplazada_shift_1 (test_fsm_inasistencias.TestFSMInasistencias.test_02_fila_desplazada_shift_1)\nFila densa con delta_i = 1 se realinea dinamicamente (tau_delta). ... ok\ntest_03_descarte_de_encabezados_y_ruido (test_fsm_inasistencias.TestFSMInasistencias.test_03_descarte_de_encabezados_y_ruido)\nTitulos, encabezados y filas vacias -> IGNORE_NOISE. ... ok\ntest_04_fision_nombres_compuestos (test_fsm_inasistencias.TestFSMInasistencias.test_04_fision_nombres_compuestos)\nOperador alpha: 'Apellidos, Nombres' se divide por ','. ... ok\ntest_05_recuperacion_de_errores (test_fsm_inasistencias.TestFSMInasistencias.test_05_recuperacion_de_errores)\nBasura irrecuperable -> ERROR_RECOVERY sin detener el proceso. ... ok\ntest_06_fila_dispersa_real (test_fsm_inasistencias.TestFSMInasistencias.test_06_fila_dispersa_real)\nPlantilla dispersa del reporte real: fase d=2 y extraccion total. ... ok\ntest_07_fila_compacta_real (test_fsm_inasistencias.TestFSMInasistencias.test_07_fila_compacta_real)\nPlantilla compacta del reporte real: fase d=0 y fechas como texto. ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.003s\n\nOK\n"
+      "duracion": 0.003959399880841374,
+      "salida": "test_01_fila_normal_alineada (test_fsm_inasistencias.TestFSMInasistencias.test_01_fila_normal_alineada)\nFila densa con delta_i = 0 se emite alineada. ... ok\ntest_02_fila_desplazada_shift_1 (test_fsm_inasistencias.TestFSMInasistencias.test_02_fila_desplazada_shift_1)\nFila densa con delta_i = 1 se realinea dinamicamente (tau_delta). ... ok\ntest_03_descarte_de_encabezados_y_ruido (test_fsm_inasistencias.TestFSMInasistencias.test_03_descarte_de_encabezados_y_ruido)\nTitulos, encabezados y filas vacias -> IGNORE_NOISE. ... ok\ntest_04_fision_nombres_compuestos (test_fsm_inasistencias.TestFSMInasistencias.test_04_fision_nombres_compuestos)\nOperador alpha: 'Apellidos, Nombres' se divide por ','. ... ok\ntest_05_recuperacion_de_errores (test_fsm_inasistencias.TestFSMInasistencias.test_05_recuperacion_de_errores)\nBasura irrecuperable -> ERROR_RECOVERY sin detener el proceso. ... ok\ntest_06_fila_dispersa_real (test_fsm_inasistencias.TestFSMInasistencias.test_06_fila_dispersa_real)\nPlantilla dispersa del reporte real: fase d=2 y extraccion total. ... ok\ntest_07_fila_compacta_real (test_fsm_inasistencias.TestFSMInasistencias.test_07_fila_compacta_real)\nPlantilla compacta del reporte real: fase d=0 y fechas como texto. ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.004s\n\nOK\n"
     }
   ],
   "chequeos": [
@@ -152,13 +312,13 @@
       "nombre": "Compilacion de modulos (compileall)",
       "ok": true,
       "detalle": "Todos los modulos compilan sin errores.",
-      "duracion": 0.1100960997864604
+      "duracion": 0.11767199984751642
     },
     {
       "nombre": "Importacion y esquema del limpiador",
       "ok": true,
       "detalle": "Esquema de 10 columnas verificado.",
-      "duracion": 3.4999102354049683e-06
+      "duracion": 4.400033503770828e-06
     }
   ]
 }

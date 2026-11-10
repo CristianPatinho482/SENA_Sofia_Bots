@@ -12,6 +12,23 @@ from .settings import BrowserSettings, RESOURCE_ROOT
 T = TypeVar("T")
 
 
+class BrowserLaunchError(RuntimeError):
+    """Chromium no pudo iniciar en este equipo."""
+
+
+def configure_bundled_browsers() -> None:
+    """Apunta Playwright al Chromium incluido en el ejecutable.
+
+    Debe llamarse antes de ``sync_playwright()`` porque el driver de Playwright
+    lee la variable de entorno al arrancar, no al lanzar el navegador.
+    """
+    import os
+
+    bundled = RESOURCE_ROOT / "ms-playwright"
+    if bundled.exists():
+        os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(bundled)
+
+
 @dataclass
 class BrowserSession:
     """Agrupa navegador, contexto y pagina para poder cerrarlos juntos."""
@@ -25,16 +42,19 @@ class BrowserSession:
     def start(self) -> Page:
         """Abre una sesion limpia de Chromium preparada para descargar archivos."""
         self.close()
-        bundled_browsers = RESOURCE_ROOT / "ms-playwright"
-        if bundled_browsers.exists():
-            import os
+        configure_bundled_browsers()
 
-            os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(bundled_browsers)
-
-        self.browser = self.playwright.chromium.launch(
-            headless=self.settings.headless,
-            slow_mo=self.settings.slow_mo,
-        )
+        try:
+            self.browser = self.playwright.chromium.launch(
+                headless=self.settings.headless,
+                slow_mo=self.settings.slow_mo,
+            )
+        except Exception as exc:
+            raise BrowserLaunchError(
+                "No fue posible iniciar Chromium. Verifica que el ejecutable "
+                "incluya la carpeta ms-playwright o instala el navegador con "
+                f"'python -m playwright install chromium'. Detalle: {exc}"
+            ) from exc
         self.context = self.browser.new_context(accept_downloads=True)
         self.context.set_default_timeout(self.settings.action_timeout_ms)
         self.context.set_default_navigation_timeout(self.settings.navigation_timeout_ms)
@@ -64,11 +84,13 @@ class RestartingRunner(Generic[T]):
         bootstrap: Callable[[Page], None],
         max_attempts: int = 3,
         retry_delay_seconds: int = 60,
+        fatal_exceptions: tuple[type[BaseException], ...] = (),
     ) -> None:
         self.session = session
         self.bootstrap = bootstrap
         self.max_attempts = max_attempts
         self.retry_delay_seconds = retry_delay_seconds
+        self.fatal_exceptions = fatal_exceptions
 
     def restart(self, attempts: int | None = None) -> Page:
         """Reabre navegador y ejecuta login/menu; puede esperar a Sofia Plus."""
@@ -93,6 +115,11 @@ class RestartingRunner(Generic[T]):
                 last_error = exc
                 self.session.close()
                 print(f"\nNo fue posible iniciar sesion o abrir el modulo: {exc}")
+
+                # Las credenciales rechazadas no se arreglan reintentando:
+                # se dejan subir para pedir datos nuevos al usuario.
+                if self.fatal_exceptions and isinstance(exc, self.fatal_exceptions):
+                    raise
 
                 if max_attempts != 0 and attempt >= max_attempts:
                     break

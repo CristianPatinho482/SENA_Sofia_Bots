@@ -9,6 +9,7 @@ Base modular para bots de Sena Sofia Plus.
 - `sofia_bots/sofia.py`: login, seleccion de rol, apertura de rutas de menu y validacion basica de sesion.
 - `sofia_bots/downloads.py`: descargas con `expect_download`, nombres unicos y opcion de sobrescritura.
 - `sofia_bots/control.py`: bitacora Excel para evitar duplicados y registrar errores.
+- `sofia_bots/credential_store.py`: guarda y reutiliza credenciales en `.env`.
 - `sofia_bots/inasistencias_cleaner.py`: limpieza FSM del consolidado y salida lista para Power BI.
 - `sofia_bots/multi.py`: utilidad simple para repartir tareas entre varios bots/hilos.
 - `bots/descargar_inasistencias.py`: primer bot modular para descargar el consolidado de inasistencias.
@@ -20,11 +21,38 @@ Ejecuta exactamente esto (en orden):
 cd "C:\Users\capatino\Documents\Software con códex"
 
 
-El nuevo bot no deja usuario ni clave escritos dentro del codigo. Puedes configurarlas de dos formas.
+El nuevo bot no deja usuario ni clave escritos dentro del codigo. La forma
+recomendada es dejar que el propio bot las guarde en `.env` la primera vez.
 
-### Opcion recomendada: archivo .env
+### Primera ejecucion (recomendada)
 
-Copia `.env.example` como `.env` en la raiz del proyecto:
+1. Ejecuta el bot interactivo:
+
+   ```powershell
+   ejecutar_inasistencias.bat
+   ```
+
+2. Ingresa tu documento y contrasena en el cuadro que aparece.
+3. El bot escribe `SOFIA_USUARIO` y `SOFIA_PASSWORD` en `.env` y no vuelve a
+   pedirlas en las siguientes ejecuciones.
+
+Vuelve a ejecutarlo con el cuadro solo si SENA Sofia Plus te obliga a cambiar la
+contrasena. El bot detecta el rechazo del ingreso y te la pide de nuevo; la clave
+nueva reemplaza la anterior en `.env`.
+
+Para forzar el cambio de credenciales manualmente:
+
+```powershell
+python -m bots.descargar_inasistencias --pedir-credenciales --forzar-credenciales
+```
+
+El archivo `.env` esta en `.gitignore`; la contrasena nunca se imprime en
+consola ni se escribe en los logs.
+
+### Opcion manual: archivo .env
+
+Si prefieres escribirlas tu, copia `.env.example` como `.env` en la raiz del
+proyecto:
 
 ```text
 C:\Users\capatino\Documents\Software con códex\.env
@@ -37,10 +65,16 @@ SOFIA_USUARIO=tu_documento
 SOFIA_PASSWORD=tu_clave
 ```
 
-Tambien puedes configurar la carpeta sincronizada de SharePoint/Teams:
+La carpeta de salida es, por defecto:
 
 ```text
-INASISTENCIAS_SALIDA=C:\Users\capatino\OneDrive - Servicio Nacional de Aprendizaje\Equipo ASTIN-DESAROLLOS POWER-BI - RAPS ASTIN 2026
+<Escritorio>\Inasistencias
+```
+
+El bot la crea una sola vez si no existe. Para usar otra ruta:
+
+```text
+INASISTENCIAS_SALIDA=C:\Users\capatino\Desktop\Inasistencias
 ```
 
 El modulo `sofia_bots/settings.py` lee este archivo automaticamente cuando ejecutas el bot desde la carpeta del proyecto.
@@ -65,15 +99,18 @@ Despues de usar `setx`, cierra y vuelve a abrir VS Code o la terminal para que l
 
 ## Ejecutar descarga de inasistencias
 
-### Con cuadro de credenciales
+### Desde el icono o el boton de Power BI
 
-Para uso manual desde un icono de escritorio o desde el lanzador:
+Para uso manual desde un icono de escritorio, desde el boton de Power BI o
+desde el lanzador:
 
 ```powershell
 ejecutar_inasistencias.bat
 ```
 
-Ese lanzador muestra un cuadro para ingresar usuario y contrasena. Las credenciales se usan solo durante esa ejecucion y no se escriben en `.env`.
+Ese lanzador abre el cuadro de credenciales **solo si no hay datos guardados en
+`.env`** o si Sofia Plus rechaza el ingreso. En ejecuciones posteriores reutiliza
+las credenciales y no muestra ningun cuadro.
 
 Comando equivalente:
 
@@ -138,9 +175,44 @@ $Shortcut.Description = 'Descarga el reporte de inasistencias desde Sofia Plus'
 $Shortcut.Save()
 ```
 
-Nota: el ejecutable usa el cuadro de credenciales, por lo que no guarda usuario ni contrasena. En otros equipos debe existir Microsoft Excel y Playwright/Chromium debe poder ejecutarse correctamente.
+Nota: el ejecutable reutiliza las credenciales guardadas en `.env` y solo abre el cuadro la primera vez o cuando Sofia Plus rechaza el ingreso. En otros equipos debe existir Microsoft Excel y Playwright/Chromium debe poder ejecutarse correctamente.
 
 La version completa incluye Chromium dentro del `.exe`, por eso pesa mas y puede tardar unos segundos en abrir la primera vez.
+
+### El ejecutable no muestra ventana
+
+El bot **no es headless por defecto**: abre una ventana de Chromium y navega a
+Sofia Plus. Si ves el proceso en el Administrador de tareas pero no aparece
+ninguna ventana:
+
+1. Revisa el log:
+
+   ```text
+   logs\sofiabot_app.log
+   ```
+
+   Si ejecutas el `.exe` desde `dist`, el bot usa el `.env` y la carpeta `logs`
+   de la raiz del proyecto para no duplicar configuracion. Si copias el `.exe` a
+   otra carpeta, usa la carpeta del ejecutable.
+
+2. Cierra todas las instancias anteriores del bot y vuelve a abrirlo. Un
+   ejecutable que ya esta corriendo puede quedar en el ciclo de reintentos.
+3. La primera apertura puede tardar por la extraccion del `.exe` (372 MB) y el
+   analisis de antivirus. Espera al menos 1-2 minutos.
+4. Si el log dice que Chromium no inicio, reinstala el navegador:
+
+   ```powershell
+   python -m playwright install chromium
+   ```
+
+5. Para forzar un fallo rapido en diagnostico:
+
+   ```powershell
+   dist\SOFIABOT_Inasistencias_Completo.exe --reintentos-servidor 1 --espera-servidor 5
+   ```
+
+El log tambien registra la ruta del ejecutable, los argumentos y la excepcion
+completa si algo falla.
 
 ### Con credenciales de .env
 
@@ -168,13 +240,18 @@ Para reintentar sin limite:
 python -m bots.descargar_inasistencias --reintentos-servidor 0
 ```
 
-Este bot actualiza siempre el archivo:
+Este bot crea una sola vez la carpeta y actualiza siempre el archivo:
 
 ```text
-C:\Users\capatino\OneDrive - Servicio Nacional de Aprendizaje\Equipo ASTIN-DESAROLLOS POWER-BI - RAPS ASTIN 2026\Inasistencias.xls
+C:\Users\capatino\Desktop\Inasistencias\Inasistencias.xls
 ```
 
-Si ya existe, lo reemplaza. Esto permite programarlo diariamente en el Programador de tareas de Windows.
+Si el Escritorio esta redirigido a OneDrive, el bot detecta la ruta real desde
+el registro de Windows. Tambien puedes fijar otra carpeta con `--salida` o con
+`INASISTENCIAS_SALIDA` en `.env`.
+
+Si el archivo ya existe, lo reemplaza de forma atomica. Esto permite programarlo
+diariamente desde Power Automate o desde el Programador de tareas de Windows.
 
 Despues de descargar, el bot abre el archivo con Microsoft Excel y renombra la primera hoja a `Inasistencias`. Esto es necesario para que los filtros o conexiones que esperan ese nombre de hoja funcionen correctamente.
 
@@ -202,6 +279,61 @@ Notas operativas:
 ```powershell
 python -m sofia_bots.inasistencias_cleaner "C:\Ruta\Inasistencias.xls"
 ```
+
+## Integracion con Power BI y Power Automate
+
+El proyecto incluye dos plantillas de flujo y la consulta M del reporte:
+
+```text
+power_automate\flujo_1_boton_powerbi.json
+power_automate\flujo_2_programado_1300.json
+power_automate\LEEME.md
+power_bi\consulta_inasistencias.pq
+```
+
+Resumen del flujo:
+
+1. El usuario pulsa el boton del reporte en Power BI.
+2. Power Automate ejecuta el flujo de escritorio que corre
+   `ejecutar_inasistencias.bat`.
+3. La primera vez el bot pide credenciales y las guarda en `.env`.
+4. El bot descarga, limpia y reemplaza
+   `<Escritorio>\Inasistencias\Inasistencias.xls`.
+5. Power BI lee ese archivo y muestra los datos actualizados.
+6. Todos los dias a la 1:00 p.m. (hora Colombia) el segundo flujo ejecuta
+   `ejecutar_inasistencias_programada.bat` sin intervencion del usuario.
+
+Texto sugerido junto al boton del reporte:
+
+> **Actualizar inasistencias**
+> Presiona este boton solo la primera vez. Despues la actualizacion es
+> automatica todos los dias a la 1:00 p.m. Vuelve a presionarlo unicamente si
+> Sofia Plus te pide cambiar la contrasena.
+
+### Ajustar el .pbix
+
+La consulta actual del reporte debe apuntar a la nueva ruta y **no** debe hacer
+`Table.Skip(1)`, porque el archivo limpio ya trae una sola fila de encabezados.
+La consulta lista para pegar esta en `power_bi\consulta_inasistencias.pq`.
+
+Pasos:
+
+1. Abre `Reporte personalizado inasistencias Sofía v2.pbix`.
+2. **Inicio > Transformar datos > Nueva origen > Consulta en blanco**.
+3. **Editor avanzado** y pega el contenido de `consulta_inasistencias.pq`.
+4. Ajusta la ruta si tu Escritorio esta en otra ubicacion.
+5. **Cerrar y aplicar** y actualiza el reporte.
+6. Guarda el `.pbix` y publicalo.
+
+Si el reporte ya tenia una consulta al archivo anterior, reemplaza su codigo M
+por este y actualiza las referencias visuales si cambian los nombres de columnas.
+
+### Archivos de Power Automate
+
+Las plantillas no son paquetes `.zip` importables: cada organizacion tiene sus
+propias conexiones, maquina y flujo de escritorio. En
+`power_automate\LEEME.md` estan los pasos exactos para crear los dos flujos y el
+flujo de escritorio que ejecuta los `.bat`.
 
 ## Optimizacion de la navegacion (ajustes manuales)
 
@@ -346,21 +478,25 @@ El dashboard muestra:
 - Rama, commit, version de Python y fecha de la corrida.
 - Chequeos de compilacion e importacion del limpiador.
 
-Incluye las 4 pruebas de integracion del limpiador y las 7 pruebas FSM
+Incluye las pruebas de integracion del bot y el limpiador (credenciales,
+carpeta de salida, errores fatales y limpieza del archivo) y las 7 pruebas FSM
 originales. El HTML no usa CDN ni servidor: se abre directamente en el navegador.
 El JSON se puede consumir desde Power BI si se quiere otro tablero.
 
 ## Programador de tareas de Windows
 
-### Ejecutar y dejar el equipo encendido
+### Actualizacion diaria a la 1:00 p.m.
 
-Forma recomendada para uso manual con cuadro de credenciales:
+La forma recomendada es el flujo de Power Automate descrito en
+`power_automate\LEEME.md`. Si prefieres el Programador de tareas de Windows,
+crea una tarea diaria a las 13:00 con:
 
-- Programa: `C:\Users\capatino\Documents\Software con códex\ejecutar_inasistencias.bat`
+- Programa: `C:\Users\capatino\Documents\Software con códex\ejecutar_inasistencias_programada.bat`
 - Argumentos: dejar vacio
 - Iniciar en: `C:\Users\capatino\Documents\Software con códex`
 
-Para una tarea completamente automatica, usa el comando sin cuadro de credenciales y deja credenciales actualizadas en `.env`.
+Ese lanzador no abre cuadros de credenciales: usa las claves guardadas en
+`.env`. Deja el equipo encendido y con sesion iniciada.
 
 ### Ejecutar y suspender el equipo al finalizar
 

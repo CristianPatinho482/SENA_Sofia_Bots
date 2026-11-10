@@ -34,7 +34,7 @@ JSON_SALIDA = REPORTES / "resultados_pruebas.json"
 FSM_DIR = ROOT / "Proyecto Limpiador Inasistencias"
 
 NOMBRES_SUITE = {
-    "test_limpieza_integrada": "Integracion del limpiador",
+    "test_limpieza_integrada": "Integracion del bot y limpiador",
     "test_fsm_inasistencias": "FSM original del limpiador",
 }
 

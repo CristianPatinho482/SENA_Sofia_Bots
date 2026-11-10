@@ -1,6 +1,7 @@
 @echo off
-rem Lanzador autonomo para Programador de tareas de Windows.
-rem No pide credenciales: usa .env (SOFIA_USUARIO / SOFIA_PASSWORD / INASISTENCIAS_SALIDA).
+rem Lanzador autonomo para Power Automate / Programador de tareas de Windows.
+rem No pide credenciales: usa las guardadas en .env por el boton interactivo.
+rem Salida por defecto: <Escritorio>\Inasistencias\Inasistencias.xls.
 rem No modifica los lanzadores manuales existentes.
 setlocal
 

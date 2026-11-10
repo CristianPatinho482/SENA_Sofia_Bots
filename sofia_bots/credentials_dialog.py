@@ -28,6 +28,7 @@ class CredentialsDialog:
         self,
         icon_path: str | Path = DEFAULT_ICON_PATH,
         banner_path: str | Path = DEFAULT_BANNER_PATH,
+        usuario_inicial: str = "",
     ) -> None:
         self.icon_path = Path(icon_path)
         self.banner_path = Path(banner_path)
@@ -38,7 +39,7 @@ class CredentialsDialog:
         self.root.resizable(False, False)
         self.root.protocol("WM_DELETE_WINDOW", self.cancel)
 
-        self.usuario = tk.StringVar()
+        self.usuario = tk.StringVar(value=usuario_inicial)
         self.password = tk.StringVar()
         self.icon_image: tk.PhotoImage | None = None
         self.banner_image: tk.PhotoImage | None = None
@@ -98,21 +99,34 @@ class CredentialsDialog:
         title.grid(row=1, column=0, columnspan=3, sticky="w", pady=(0, 4))
 
         subtitle = ttk.Label(frame, text="Ingreso a Sofia Plus")
-        subtitle.grid(row=2, column=0, columnspan=3, sticky="w", pady=(0, 12))
+        subtitle.grid(row=2, column=0, columnspan=3, sticky="w", pady=(0, 4))
 
-        ttk.Label(frame, text="Usuario").grid(row=3, column=0, columnspan=3, sticky="w")
+        info = ttk.Label(
+            frame,
+            text=(
+                "Solo se solicita la primera vez. Despues el bot reutiliza las "
+                "credenciales guardadas en .env.\nVuelve a ejecutarlo si Sofia "
+                "Plus te pide cambiar la contrasena."
+            ),
+            foreground="#555555",
+            justify="left",
+            wraplength=360,
+        )
+        info.grid(row=3, column=0, columnspan=3, sticky="w", pady=(0, 14))
+
+        ttk.Label(frame, text="Usuario").grid(row=4, column=0, columnspan=3, sticky="w")
         user_entry = ttk.Entry(frame, textvariable=self.usuario, width=40)
-        user_entry.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(2, 10))
+        user_entry.grid(row=5, column=0, columnspan=3, sticky="ew", pady=(2, 10))
 
-        ttk.Label(frame, text="Contraseña").grid(row=5, column=0, columnspan=3, sticky="w")
+        ttk.Label(frame, text="Contraseña").grid(row=6, column=0, columnspan=3, sticky="w")
         password_entry = ttk.Entry(frame, textvariable=self.password, width=40, show="*")
-        password_entry.grid(row=6, column=0, columnspan=3, sticky="ew", pady=(2, 14))
+        password_entry.grid(row=7, column=0, columnspan=3, sticky="ew", pady=(2, 14))
 
         cancel_button = ttk.Button(frame, text="Cancelar", command=self.cancel)
-        cancel_button.grid(row=7, column=1, sticky="e", padx=(0, 8))
+        cancel_button.grid(row=8, column=1, sticky="e", padx=(0, 8))
 
         start_button = ttk.Button(frame, text="Ejecutar", command=self.accept)
-        start_button.grid(row=7, column=2, sticky="e")
+        start_button.grid(row=8, column=2, sticky="e")
 
         self.root.bind("<Return>", lambda _event: self.accept())
         self.root.bind("<Escape>", lambda _event: self.cancel())
@@ -157,6 +171,11 @@ class CredentialsDialog:
 def ask_credentials(
     icon_path: str | Path = DEFAULT_ICON_PATH,
     banner_path: str | Path = DEFAULT_BANNER_PATH,
+    usuario_inicial: str = "",
 ) -> SofiaCredentials | None:
     """Muestra el cuadro de credenciales y retorna None si el usuario cancela."""
-    return CredentialsDialog(icon_path=icon_path, banner_path=banner_path).show().credentials
+    return CredentialsDialog(
+        icon_path=icon_path,
+        banner_path=banner_path,
+        usuario_inicial=usuario_inicial,
+    ).show().credentials

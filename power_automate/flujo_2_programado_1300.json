@@ -1,0 +1,70 @@
+{
+  "_LEEME": [
+    "Plantilla de flujo en la nube para la actualizacion diaria de las 13:00.",
+    "No es un paquete .zip importable: pega el objeto 'definition' en Power Automate",
+    "con 'Mis flujos > ... > Peek code' o crea el flujo siguiendo power_automate/LEEME.md.",
+    "Reemplaza el marcador DESKTOP_FLOW_ID y las conexiones antes de guardar."
+  ],
+  "nombre_sugerido": "SOFIABOT - Inasistencias diario 13:00",
+  "descripcion": "Todos los dias a la 1:00 p.m. (hora Colombia) ejecuta el lanzador autonomo que descarga, limpia y reemplaza Inasistencias.xls en el Escritorio.",
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "DesktopFlowId": {
+        "defaultValue": "DESKTOP_FLOW_ID",
+        "type": "String"
+      }
+    },
+    "triggers": {
+      "Todos_los_dias_a_la_1_pm": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "timeZone": "SA Pacific Standard Time",
+          "startTime": "2026-01-15T13:00:00"
+        }
+      }
+    },
+    "actions": {
+      "Ejecutar_actualizacion_programada": {
+        "type": "ApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['shared_uiflow']['connectionId']"
+            }
+          },
+          "method": "post",
+          "path": "/flows/@{encodeURIComponent(parameters('DesktopFlowId'))}/run",
+          "body": {
+            "runMode": "unattended",
+            "runPriority": "normal",
+            "videoLogger": "disabled",
+            "uiFlowId": "@parameters('DesktopFlowId')",
+            "item": {}
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "outputs": {}
+  },
+  "connectionReferences": {
+    "shared_uiflow": {
+      "connectionName": "shared_uiflow",
+      "source": "Embedded"
+    }
+  },
+  "flujo_escritorio_esperado": {
+    "nombre": "SOFIABOT - Inasistencias programado",
+    "accion_1": "Ejecutar aplicacion: ejecutar_inasistencias_programada.bat",
+    "accion_2": "Esperar a que termine el proceso",
+    "observacion": "No abre cuadros de credenciales. Usa las claves guardadas en .env. La maquina debe estar encendida y con sesion iniciada si el navegador se ejecuta en modo visible."
+  }
+}

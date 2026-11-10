@@ -7,6 +7,7 @@ build/
 dist/
 *.spec
 *.log
+logs/
 control_*.xlsx
 *.xls
 outputs/

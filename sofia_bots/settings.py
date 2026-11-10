@@ -6,17 +6,62 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+def detect_data_root(executable_dir: Path) -> Path:
+    """Elige donde viven .env y logs cuando el bot corre como ejecutable.
+
+    Si el .exe esta dentro de la carpeta ``dist`` del proyecto, se usa la raiz
+    del proyecto para no duplicar credenciales ni logs. Si el .exe se copia a
+    otra ubicacion, se usa su propia carpeta para mantenerlo portable.
+    """
+    candidate = executable_dir.parent
+    if (candidate / "bots").is_dir() and (candidate / "sofia_bots").is_dir():
+        return candidate
+    return executable_dir
+
+
 if getattr(sys, "frozen", False):
-    PROJECT_ROOT = Path(sys.executable).resolve().parent
-    RESOURCE_ROOT = Path(getattr(sys, "_MEIPASS", PROJECT_ROOT))
+    EXE_DIR = Path(sys.executable).resolve().parent
+    PROJECT_ROOT = detect_data_root(EXE_DIR)
+    RESOURCE_ROOT = Path(getattr(sys, "_MEIPASS", EXE_DIR))
 else:
-    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+    EXE_DIR = Path(__file__).resolve().parents[1]
+    PROJECT_ROOT = EXE_DIR
     RESOURCE_ROOT = PROJECT_ROOT
 
 DEFAULT_ENV_FILE = PROJECT_ROOT / ".env"
 SOFIA_URL = "http://senasofiaplus.edu.co/sofia-public/"
 DEFAULT_ROLE_LABEL = "Gestion Desarrollo Curricular"
 DEFAULT_ROLE_VALUE = "17"
+DEFAULT_INASISTENCIAS_FOLDER = "Inasistencias"
+
+
+def desktop_dir() -> Path:
+    """Devuelve el Escritorio real del usuario, incluso si OneDrive lo redirige.
+
+    En Windows la ubicacion puede estar redirigida a OneDrive. Se consulta el
+    registro para respetar esa configuracion; si no es posible, se usa
+    ``~/Desktop``.
+    """
+    if sys.platform == "win32":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders",
+            ) as key:
+                value, _ = winreg.QueryValueEx(key, "Desktop")
+            expanded = os.path.expandvars(value)
+            if expanded:
+                return Path(expanded)
+        except Exception:
+            pass
+    return Path.home() / "Desktop"
+
+
+def default_inasistencias_dir() -> Path:
+    """Carpeta operativa donde el bot deja el reporte limpio para Power BI."""
+    return desktop_dir() / DEFAULT_INASISTENCIAS_FOLDER
 
 
 def load_env_file(path: str | Path = DEFAULT_ENV_FILE) -> None:

@@ -8,6 +8,10 @@ from .settings import SOFIA_URL, SofiaSettings
 from .text import strip_accents
 
 
+class SofiaLoginError(RuntimeError):
+    """Credenciales rechazadas o Sofia Plus exige cambiar la contrasena."""
+
+
 def accent_tolerant_pattern(label: str) -> re.Pattern[str]:
     """Crea patrones que encuentran textos con o sin tildes en los menus."""
     replacements = {
@@ -62,14 +66,21 @@ def login(page: Page, settings: SofiaSettings) -> None:
     print("\nIniciando sesion Sofia Plus...")
     frame = find_login_frame(page, timeout_ms=settings.browser.navigation_timeout_ms)
 
-    frame.get_by_role("textbox", name=re.compile("Documento", re.I)).fill(
-        settings.credentials.usuario
-    )
-    frame.get_by_role("textbox", name=re.compile("Contrase", re.I)).fill(
-        settings.credentials.password
-    )
-    frame.get_by_role("button", name=re.compile("Ingresar", re.I)).click()
-    page.locator('[id="seleccionRol:roles"]').wait_for(timeout=30_000)
+    try:
+        frame.get_by_role("textbox", name=re.compile("Documento", re.I)).fill(
+            settings.credentials.usuario
+        )
+        frame.get_by_role("textbox", name=re.compile("Contrase", re.I)).fill(
+            settings.credentials.password
+        )
+        frame.get_by_role("button", name=re.compile("Ingresar", re.I)).click()
+        page.locator('[id="seleccionRol:roles"]').wait_for(timeout=30_000)
+    except TimeoutError as exc:
+        raise SofiaLoginError(
+            "Sofia Plus no acepto el ingreso. Verifica el usuario y la contrasena. "
+            "Si el portal solicita cambiar la contrasena, actualizala y vuelve a "
+            "ejecutar el bot."
+        ) from exc
     print("Sesion iniciada.")
 
 
